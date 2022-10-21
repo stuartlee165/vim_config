@@ -1,55 +1,90 @@
-call plug#begin()
-" The default plugin directory will be as follows:
-"   - Vim (Linux/macOS): '~/.vim/plugged'
-"   - Vim (Windows): '~/vimfiles/plugged'
-"   - Neovim (Linux/macOS/Windows): stdpath('data') . '/plugged'
-" You can specify a custom plugin directory by passing it as the argument
+"   This config file should be save here for neovim: .config/nvim/init.vim
+
+" Script below experiment to install vim-plug if not already available
+if empty(glob('~/.local/share/nvim/plugged'))
+  silent !curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall
+endif
+"
+call plug#begin('~/.local/share/nvim/plugged')
+"call plug#begin()
+"   This config file should be save here for neovim: .config/nvim/init.vim
+"   Plugins should be installed using https://github.com/junegunn/vim-plug
+"   and saved here: .local/share/nvim/plugged
+" You can specify default directory for plugins directory by passing it as the argument
 "   - e.g. `call plug#begin('~/.vim/plugged')`
 "   - Avoid using standard Vim directory names like 'plugin'
-
 " Make sure you use single quotes
+
+" Allows to connect to a jupyter console which is useful for viewing charts
+" terminal: qtconsole
+" vim: JupyterConnect
 Plug 'jupyter-vim/jupyter-vim'
-Plug 'sillybun/vim-repl'
 
 " Plugin which allows % to jump between tags
 Plug 'https://github.com/adelarsq/vim-matchit'
-"allows copy paste of filepath in NerdTree
-Plug'mortonfox/nerdtree-clip'
-" Allows connection to a jupyter console 
-Plug'jupyter-vim/jupyter-vim'
 
+" Nerd Tree - nagivate files (\ne) 
 Plug 'preservim/nerdtree'
+"allows copy paste of filepath in NerdTree (use mb)
+Plug'mortonfox/nerdtree-clip'
+
+" code auto-completion and documentation viewing
+" shift K: view documentation
+" gd: to do definition of function
+" :Pyimport pandas -> opens pandas import file
+" /r : rename variable
+" Cntrl space :autocomplete suggestions
 Plug 'davidhalter/jedi-vim'
+
+" Shows errors in code indicated by >>
+" The error comment is shown in the status bar below
 Plug 'dense-analysis/ale'
+
 " Create doc strings for functions use :DocstringTypes
 Plug 'pixelneo/vim-python-docstring'
+
+" Allows git commands to be used in vim e.g Git diff
 Plug 'tpope/vim-fugitive'
+"
+" Applies Black formatting to Python files
 Plug 'https://github.com/psf/black'
+"
+" Debugging Interface
 Plug 'https://github.com/puremourning/vimspector'
+" Changing surrounding (cs) quotes etc.
+" cs"' : changes to single quotes
 Plug 'tpope/vim-surround'
 " Git power bar
 Plug 'vim-airline/vim-airline'
-Plug 'puremourning/vimspector'
+Plug 'vim-airline/vim-airline-themes'
 
-" Quick Search all files: (enter or o in file script to open)
+" Quick Search all files:
+" :CTRLSF <search_string>
+" (enter or o in file script to open)
 Plug 'dyng/ctrlsf.vim'
-" Github theme plug
+
+" Github theme plug for neovim
 Plug 'projekt0n/github-nvim-theme'
 " Initialize plugin system
 call plug#end()
+
+" show numbers on left
 set number
+" show matching bracket to one selected
 set showmatch
+" what does this do?
 let python_highlight_all = 1
+" Syntax highlighting (i.e. different colours for python code) on
 syntax on
 
-
-
-
-"split navigations
+"Navigage between buffers
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
+"Defines where default buffer splits goto
 set splitbelow splitright
 map <Leader>tt :vnew term://
 
@@ -75,8 +110,6 @@ set ma
 nnoremap <Leader>q" ciw""<Esc>P
 nnoremap <Leader>q( ciw()<Esc>P
 
-
-
 "setup ale fixers
 let b:ale_fixers = ['isort']
 
@@ -90,6 +123,7 @@ let g:vimspector_enable_mappings = 'HUMAN'
 "packadd! vimspector
 " vim spectpor debug baloon shortcut
 " mnemonic 'di' = 'debug inspect' (pick your own, if you prefer!)
+
 
 " for normal mode - the word under the cursor
 nmap <Leader>di <Plug>VimspectorBalloonEval
@@ -135,3 +169,14 @@ let g:ctrlsf_default_root = 'cwd'
 
 " add line numbers to nerd tree
 let NERDTreeShowLineNumbers=1
+
+"add ipdb debug
+nmap <Leader>pdb iimport<Space>ipdb<Esc>oipdb.set_trace()<Esc>
+nmap <Leader>1pdb i<Tab>import<Space>ipdb<Esc>oipdb.set_trace()<Esc>
+nmap <Leader>2pdb i<Tab><Tab>import<Space>ipdb<Esc>oipdb.set_trace()<Esc>
+
+" get file path using \cfp
+nmap <Leader>cfp :let @+=expand("%:p")<CR>
+" get file path using \cfp2
+nmap <Leader>cfp2 :let @+=expand("%")<CR>
+
