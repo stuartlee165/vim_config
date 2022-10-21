@@ -1,11 +1,14 @@
-" Script below experiment to install vim-plug if not already available
-if empty(glob('~/.local/share/nvim/plugged'))
-  silent !curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
- https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall
+let plug_install = 0
+let autoload_plug_path = stdpath('config') . '/autoload/plug.vim'
+if !filereadable(autoload_plug_path)
+    silent exe '!curl -fL --create-dirs -o ' . autoload_plug_path . 
+        \ ' https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+    execute 'source ' . fnameescape(autoload_plug_path)
+    let plug_install = 1
 endif
-"
-call plug#begin('~/.local/share/nvim/plugged')
+unlet autoload_plug_path
+
+call plug#begin('~/config/nvim/plugins')
 "call plug#begin()
 "   This config file should be save here for neovim: .config/nvim/init.vim
 "   Plugins should be installed using https://github.com/junegunn/vim-plug
@@ -65,10 +68,16 @@ Plug 'dyng/ctrlsf.vim'
 
 " Github theme plug for neovim
 Plug 'projekt0n/github-nvim-theme'
+
 " Buffer cycle
 Plug 'jlanzarotta/bufexplorer'
 " Initialize plugin system
 call plug#end()
+
+if plug_install
+    PlugInstall --sync
+endif
+unlet plug_install
 
 " show numbers on left
 set number
@@ -154,9 +163,10 @@ let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 " autoformat to correct line length)
 au BufRead,BufNewFile *.py setlocal textwidth=80
 
-" Use github color scheme
-colorscheme github_dark_default
-" Over-ride search highlight color
+" Load the colorscheme
+colorscheme github_dark
+
+
 set hlsearch
 hi Search ctermbg=Yellow
 hi Search ctermfg=Red
