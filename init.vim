@@ -1,5 +1,3 @@
-"   This config file should be save here for neovim: .config/nvim/init.vim
-
 " Script below experiment to install vim-plug if not already available
 if empty(glob('~/.local/share/nvim/plugged'))
   silent !curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
@@ -18,7 +16,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 " Make sure you use single quotes
 
 " Allows to connect to a jupyter console which is useful for viewing charts
-" terminal: qtconsole
+" terminal: jupyter qtconsole
 " vim: JupyterConnect
 Plug 'jupyter-vim/jupyter-vim'
 
@@ -67,6 +65,8 @@ Plug 'dyng/ctrlsf.vim'
 
 " Github theme plug for neovim
 Plug 'projekt0n/github-nvim-theme'
+" Buffer cycle
+Plug 'jlanzarotta/bufexplorer'
 " Initialize plugin system
 call plug#end()
 
@@ -167,8 +167,9 @@ packadd! matchit
 " Set ctrlsf search tool to use current working directory as root for searches
 let g:ctrlsf_default_root = 'cwd'
 
-" add line numbers to nerd tree
+" add line numbers to nerd tree / show bookmarks on startup
 let NERDTreeShowLineNumbers=1
+let NERDTreeShowBookmarks=1
 
 "add ipdb debug
 nmap <Leader>pdb iimport<Space>ipdb<Esc>oipdb.set_trace()<Esc>
@@ -180,3 +181,8 @@ nmap <Leader>cfp :let @+=expand("%:p")<CR>
 " get file path using \cfp2
 nmap <Leader>cfp2 :let @+=expand("%")<CR>
 
+"key bindings for bufexplorer
+" Buffers - explore/next/previous: Alt-F12, F12, Shift-F12.
+map <Leader>bfs :BufExplorer<Enter>
+map <Leader>bff :bn<Enter>
+map <Leader>bfp :bp<Enter>
