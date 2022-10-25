@@ -164,7 +164,7 @@ let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 au BufRead,BufNewFile *.py setlocal textwidth=80
 
 " Load the colorscheme
-colorscheme github_dark
+colorscheme github_dark_default
 
 
 set hlsearch
