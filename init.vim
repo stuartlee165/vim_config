@@ -1,14 +1,11 @@
-let plug_install = 0
-let autoload_plug_path = stdpath('config') . '/autoload/plug.vim'
-if !filereadable(autoload_plug_path)
-    silent exe '!curl -fL --create-dirs -o ' . autoload_plug_path . 
-        \ ' https://raw.github.com/junegunn/vim-plug/master/plug.vim'
-    execute 'source ' . fnameescape(autoload_plug_path)
-    let plug_install = 1
+" Script below experiment to install vim-plug if not already available
+if empty(glob('~/.local/share/nvim/plugged'))
+  silent !curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall
 endif
-unlet autoload_plug_path
-
-call plug#begin('~/config/nvim/plugins')
+"
+call plug#begin('~/.local/share/nvim/plugged')
 "call plug#begin()
 "   This config file should be save here for neovim: .config/nvim/init.vim
 "   Plugins should be installed using https://github.com/junegunn/vim-plug
@@ -68,16 +65,29 @@ Plug 'dyng/ctrlsf.vim'
 
 " Github theme plug for neovim
 Plug 'projekt0n/github-nvim-theme'
-
 " Buffer cycle
 Plug 'jlanzarotta/bufexplorer'
+
+"tool for writing html quickly
+Plug 'https://github.com/mattn/emmet-vim'
+
+"Auto close html tabs with > key
+Plug 'https://github.com/alvan/vim-closetag'
+
+"auto change both tags when using ciw
+Plug 'https://github.com/AndrewRadev/tagalong.vim'
+" Add syntax for Jinja
+Plug 'https://github.com/lepture/vim-jinja'
+" Sneak for navigating more quickly 
+Plug 'https://github.com/justinmk/vim-sneak'
+" Allow to cycle through copy history when pasting
+Plug 'https://github.com/svermeulen/vim-yoink'
+" better way of replacing words
+Plug 'https://github.com/svermeulen/vim-subversive'
+" Cutlass - stops delete from going to register
+Plug 'https://github.com/svermeulen/vim-cutlass'
 " Initialize plugin system
 call plug#end()
-
-if plug_install
-    PlugInstall --sync
-endif
-unlet plug_install
 
 " show numbers on left
 set number
@@ -118,6 +128,8 @@ set ma
 "keyboard short cut for wrapping word in quotes \q" 
 nnoremap <Leader>q" ciw""<Esc>P
 nnoremap <Leader>q( ciw()<Esc>P
+nnoremap <Leader>q[ ciw[]<Esc>P
+nnoremap <Leader>q{ ciw{}<Esc>P
 
 "setup ale fixers
 let b:ale_fixers = ['isort']
@@ -163,10 +175,9 @@ let g:airline#extensions#tabline#formatter = 'unique_tail_improved'
 " autoformat to correct line length)
 au BufRead,BufNewFile *.py setlocal textwidth=80
 
-" Load the colorscheme
+" Use github color scheme
 colorscheme github_dark_default
-
-
+" Over-ride search highlight color
 set hlsearch
 hi Search ctermbg=Yellow
 hi Search ctermfg=Red
@@ -191,8 +202,49 @@ nmap <Leader>cfp :let @+=expand("%:p")<CR>
 " get file path using \cfp2
 nmap <Leader>cfp2 :let @+=expand("%")<CR>
 
-"key bindings for bufexplorer
+"buffers key bindings for bufexplorer
 " Buffers - explore/next/previous: Alt-F12, F12, Shift-F12.
 map <Leader>bfs :BufExplorer<Enter>
 map <Leader>bff :bn<Enter>
 map <Leader>bfp :bp<Enter>
+
+" HTML Shortcuts
+"add autocomplete html using inbuilt vim autocomplete
+"use cntl x cntl o to show options
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+
+"only use emmet plug on html
+let g:user_emmet_install_global = 0
+" set emet shortcut as ,
+let g:user_emmet_leader_key=','
+autocmd FileType html,css EmmetInstall
+" tidy up html file with tidy (vim standard tool)
+" short cut th for tidy html
+map <Leader>th :!tidy -mi -html -wrap 0 %
+
+" Yoink for pasting reorder
+nmap <c-n> <plug>(YoinkPostPasteSwapBack)
+nmap <c-p> <plug>(YoinkPostPasteSwapForward)
+
+nmap p <plug>(YoinkPaste_p)
+nmap P <plug>(YoinkPaste_P)
+
+" Also replace the default gp with yoink paste so we can toggle paste in this case too
+nmap gp <plug>(YoinkPaste_gp)
+nmap gP <plug>(YoinkPaste_gP)
+
+" mapping to use vim subversive
+" r for substitute
+nmap r <plug>(SubversiveSubstitute)
+nmap rr <plug>(SubversiveSubstituteLine)
+nmap R <plug>(SubversiveSubstituteToEndOfLine)
+
+" Vim cutlass - stops delete from saving to register
+" As using vim yoink need to add the below to that cuts get added to register
+" Note that x has been replaced therefore have to use dl (i.e. delete letter
+" instead)
+let g:yoinkIncludeDeleteOperations = 1
+nnoremap x d
+xnoremap x d
+nnoremap xx dd
+nnoremap X D
