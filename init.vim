@@ -232,6 +232,8 @@ nmap P <plug>(YoinkPaste_P)
 " Also replace the default gp with yoink paste so we can toggle paste in this case too
 nmap gp <plug>(YoinkPaste_gp)
 nmap gP <plug>(YoinkPaste_gP)
+" Set max paste history for yoink to remember
+let g:yoinkMaxItems = 40
 
 " mapping to use vim subversive
 " r for substitute
