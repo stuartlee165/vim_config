@@ -86,6 +86,8 @@ Plug 'https://github.com/svermeulen/vim-yoink'
 Plug 'https://github.com/svermeulen/vim-subversive'
 " Cutlass - stops delete from going to register
 Plug 'https://github.com/svermeulen/vim-cutlass'
+" fuzzy search in vim
+Plug 'https://github.com/ctrlpvim/ctrlp.vim'
 " Initialize plugin system
 call plug#end()
 
@@ -250,3 +252,27 @@ nnoremap x d
 xnoremap x d
 nnoremap xx dd
 nnoremap X D
+
+" Fuzzy search map to cntrl p
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'ra'
+
+" Shortcut to copy file path to clipboard
+" This is hackey - it creates new line with file path
+" Copies then deletes
+nmap <Leader>fp o<c-R><c-%><esc>xx
+
+" Copy branch name (also very hacky)
+nmap <Leader>bn :Git branch<cr>s*<cr>wY:bd<cr>
+
+" Git add current file
+nmap <Leader>ga :Git add <c-R><c-%><cr>
+" Git commit
+nmap <Leader>gc :Git commit<cr>
+" Git status
+nmap <Leader>gs :Git status<cr>
+" Git restore current file
+nmap <Leader>gr :Git restore --staged <c-R><c-%><cr>
+" Git checkout master
+nmap <Leader>gcm :Git checkout master | Git pull origin master Git fetch -p<cr> 
